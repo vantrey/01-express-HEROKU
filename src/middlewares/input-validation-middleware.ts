@@ -4,12 +4,8 @@ import {body, validationResult} from 'express-validator'
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-        let newErrors = errors.array()
-        let countYoutubeUrl = 0
-        errors.array().forEach(e => e.param ==='youtubeUrl' && countYoutubeUrl++)
-        if(countYoutubeUrl>1){
-            newErrors = errors.array().filter((e) =>  !(e.param ==='youtubeUrl' && e.msg.includes('length 2-100 ')) )
-        }
+        let newErrors = errors.array({onlyFirstError: true})
+
         res.status(400).json({
             resultCode: 1,
             errorsMessages: newErrors.map((e) => ({
